@@ -7,7 +7,7 @@ def main():
     args = parse_args()
     print("Loading resources...")
     # Load Errant
-    annotator = errant.load("en")
+    annotator = errant.load(args.lang)
     # Open output m2 file
     out_m2 = open(args.out, "w")
 
@@ -66,6 +66,11 @@ def parse_args():
         "-out", 
         help="The output filepath.",
         required=True)
+    parser.add_argument(
+        "-lang",
+        choices=["en", "cs"],
+        help="Input language. Currently supported: en (default), cs.",
+        default="en")
     parser.add_argument(
         "-tok", 
         help="Word tokenise the text using spacy (default: False).",

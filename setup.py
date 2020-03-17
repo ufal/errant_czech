@@ -20,7 +20,7 @@ setup(
     url = "https://github.com/chrisjbryant/errant",    
     keywords = ["automatic annotation", "grammatical errors", "natural language processing"],
     python_requires = ">= 3.3",
-    install_requires = ["spacy == 1.9.0", "nltk >= 3.0"],
+    install_requires = ["nltk >= 3.0"],
     packages = find_packages(),    
     include_package_data=True,
     entry_points = {

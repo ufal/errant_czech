@@ -2,6 +2,7 @@ from difflib import SequenceMatcher
 from itertools import groupby
 import spacy.parts_of_speech as POS
 from errant.edit import Edit
+from .cs.merger import is_transposition_compatible
 
 class Alignment:
     # Protected class resource
@@ -63,7 +64,7 @@ class Alignment:
                         k = 1
                         while i-k >= 0 and j-k >= 0 and \
                                 cost_matrix[i-k+1][j-k+1]-cost_matrix[i-k][j-k] > 0:
-                            if sorted(o_low[i-k:i+1]) == sorted(c_low[j-k:j+1]):
+                            if is_transposition_compatible(self.orig[i - k:i + 1], self.cor[j - k:j + 1]):
                                 trans_cost = cost_matrix[i-k][j-k] + k
                                 break
                             k += 1

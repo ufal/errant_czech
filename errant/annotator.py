@@ -18,13 +18,20 @@ class Annotator:
     # Input 2: A flag for word tokenisation
     # Output: The input string parsed by spacy
     def parse(self, text, tokenise=False):
+
         if tokenise:
-            text = self.nlp(text)
+            self.nlp.udpipe.tokenize = self.nlp.udpipe.tokenize_do
         else:
-            text = self.nlp.tokenizer.tokens_from_list(text.split())
-            self.nlp.tagger(text)
-            self.nlp.parser(text)
-        return text
+            self.nlp.udpipe.tokenize = self.nlp.udpipe.tokenize_none
+
+        return self.nlp(text)
+        # if tokenise:
+        #     text = self.nlp(text)
+        # else:
+        #     text = self.nlp.tokenizer.tokens_from_list(text.split())
+        #     self.nlp.tagger(text)
+        #     self.nlp.parser(text)
+        # return text
 
     # Input 1: An original text string parsed by spacy
     # Input 2: A corrected text string parsed by spacy
@@ -55,10 +62,10 @@ class Annotator:
                 "rules, all-split, all-merge, all-equal.")
         return edits
 
-    # Input: An Edit object
+    # Input: An Edit object, original and corrected sentences
     # Output: The same Edit object with an updated error type
-    def classify(self, edit):
-        return self.classifier.classify(edit)
+    def classify(self, edit, orig, cor):
+        return self.classifier.classify(edit, orig, cor)
 
     # Input 1: An original text string parsed by spacy
     # Input 2: A corrected text string parsed by spacy
@@ -69,7 +76,7 @@ class Annotator:
         alignment = self.align(orig, cor, lev)
         edits = self.merge(alignment, merging)
         for edit in edits:
-            edit = self.classify(edit)
+            edit = self.classify(edit, orig, cor)
         return edits
 
     # Input 1: An original text string parsed by spacy
