@@ -8,6 +8,7 @@ from string import punctuation
 import numpy as np
 import spacy.parts_of_speech as POS
 from weighted_levenshtein import lev
+from typing import List
 
 from errant.edit import Edit
 
@@ -125,8 +126,8 @@ def process_seq(seq, alignment):
         # Case changes
         if o[-1].lower == c[-1].lower:
             # Merge first token I or D: [Cat -> The big cat]
-            if start == 0 and (len(o) == 1 and c[0].text[0].isupper()) or \
-                    (len(c) == 1 and o[0].text[0].isupper()):
+            if start == 0 and ((len(o) == 1 and c[0].text[0].isupper()) or \
+                    (len(c) == 1 and o[0].text[0].isupper())):
                 return merge_edits(seq[start:end + 1]) + \
                        process_seq(seq[end + 1:], alignment)
             # Merge with previous punctuation: [, we -> . We], [we -> . We]
@@ -184,14 +185,14 @@ def is_punct(token):
     return token.pos == POS.PUNCT or token.text in punctuation
 
 
-def is_transposition_compatible(source_tokens, corrected_tokens):
+def is_transposition_compatible(source_tokens:List[str], corrected_tokens:List[str]):
     if len(source_tokens) != len(corrected_tokens):
         return False
 
     transpose_len = len(source_tokens)
     if transpose_len > 5:
         # if length of the potential transposition is too big, check only for exact lower-cased reordering (i.e. no spelling allowed)
-        return sorted([s.lower for s in source_tokens]) == sorted([c.lower for c in corrected_tokens])
+        return sorted([s.lower() for s in source_tokens]) == sorted([c.lower() for c in corrected_tokens])
 
     # construct all possible valid permutations (permutation is not valid when the first token maps to first token or the last token maps to last token)
     permutations = [perm for perm in itertools.permutations(range(transpose_len)) if perm[0] != 0 and perm[transpose_len - 1] != transpose_len - 1]

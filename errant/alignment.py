@@ -64,7 +64,9 @@ class Alignment:
                         k = 1
                         while i-k >= 0 and j-k >= 0 and \
                                 cost_matrix[i-k+1][j-k+1]-cost_matrix[i-k][j-k] > 0:
-                            if is_transposition_compatible(self.orig[i - k:i + 1], self.cor[j - k:j + 1]):
+                            orig_tokens = [token.text for token in self.orig[i - k:i + 1]]
+                            cor_tokens = [token.text for token in self.cor[j - k:j + 1]]
+                            if is_transposition_compatible(orig_tokens, cor_tokens):
                                 trans_cost = cost_matrix[i-k][j-k] + k
                                 break
                             k += 1

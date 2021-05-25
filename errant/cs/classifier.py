@@ -1,10 +1,11 @@
+import re
 from difflib import SequenceMatcher
 from pathlib import Path
 
 import unidecode
-from nltk.stem import LancasterStemmer
 
 from . import merger
+from .czech_stemmer import cz_stem
 from .rosen_chyby import compare_words
 
 
@@ -19,8 +20,7 @@ base_dir = Path(__file__).resolve().parent
 # Spacy
 nlp = None
 # Lancaster Stemmer
-stemmer = LancasterStemmer()
-# GB English word list (inc -ise and -ize)
+# Czech MOFFLEX word list (inc -ise and -ize)
 spell = load_word_list(base_dir / "resources" / "morfflex-cz.2016-03-10.utf8.conll09.tab_uniq")
 # Rare POS tags that make uninformative error categories
 rare_pos = {"SYM", "X"}
@@ -81,7 +81,6 @@ def classify(edit, orig, cor):
         else:
             op = "R:"
             cat = get_two_sided_type(edit.o_toks, edit.c_toks, orig, cor)
-            print(cat)
             edit.type = op + cat
     return edit
 
@@ -105,8 +104,6 @@ def get_edit_info(toks):
 def get_one_sided_type(toks):
     # Extract strings, pos tags and parse info from the toks
     str_list, pos_list, dep_list = get_edit_info(toks)
-
-    print("one", toks, str_list, pos_list, dep_list)
 
     # byt vsechny mozne formy
 
@@ -134,6 +131,25 @@ def get_one_sided_type(toks):
         return "OTHER" + err_type
 
 
+def get_detailed_error_types_for_word_to_word(orig_str, cor_str):
+    if len(orig_str) == len(cor_str):
+        detailed_err_types = compare_words(orig_str[0], cor_str[0])
+        # filter out all unspecs
+        detailed_err_types = [x for x in detailed_err_types.split('|') if 'unspec' not in x.lower()]
+
+        # if there are multiple char-error types identified, remove all formSingCh from them
+        if len(detailed_err_types) > 1:
+            detailed_err_types = [x for x in detailed_err_types if 'formSingCh' not in x]
+
+        if not detailed_err_types or len(detailed_err_types) != 1:
+            detailed_err_types = ""
+        else:
+            detailed_err_types = ":{}".format(detailed_err_types[0])
+        return detailed_err_types
+    else:
+        return ""
+
+
 # Input 1: Spacy orig tokens
 # Input 2: Spacy cor tokens
 # Output: An error type string based on orig AND cor
@@ -142,20 +158,34 @@ def get_two_sided_type(o_toks, c_toks, orig_toks, cor_toks):
     orig_str, orig_pos, orig_dep = get_edit_info(o_toks)
     cor_str, cor_pos, cor_dep = get_edit_info(c_toks)
 
-    print("two", orig_str, orig_pos, orig_dep, "|", cor_str, cor_pos, cor_dep)
+    # Other local changes (applicable only when there is a single word in source and target)
+    detailed_err_types = get_detailed_error_types_for_word_to_word(orig_str, cor_str)
 
+    # Punctuation
+    if re.sub(r"\p{P}+", "", " ".join(orig_str)) == re.sub(r"\p{P}+", "", " ".join(cor_str)):
+        return "PUNCT"
     # Diacritics
     if unidecode.unidecode(" ".join(orig_str)) == unidecode.unidecode(" ".join(cor_str)):
-        return "DIACR"
+        return "DIACR" + detailed_err_types
     # Orthography; i.e. whitespace and/or case errors.
     if only_orth_change(orig_str, cor_str):
         orth_type = ''
 
         if "".join(orig_str) == "".join(cor_str):
-            orth_type = ":WSPACE"
+            # common case is inserted/omitted whitespace between a preposition and a following word
+            if (len(orig_str) == 2 and len(cor_str) == 1 and orig_pos[0] == 'PREP') or (
+                                len(orig_str) == 1 and len(cor_str) == 2 and cor_pos[0] == 'PREP'):
+                orth_type = ":WSPACE:PREP"
+            else:
+                orth_type = ":WSPACE"
         elif " ".join(orig_str).lower() == " ".join(cor_str).lower():
             orth_type = ":CASING"
         return "ORTH" + orth_type
+    # QUOTATION MARKS (in proper Czech texts "this is bad" while „This is correct“
+    #  " this is also bad"  (this rule needs to be checked after ortography)
+    if " ".join(orig_str).replace("\"", "").replace("“", "").replace("„", "").replace(' ', '') == \
+            " ".join(cor_str).replace("\"", "").replace("“", "").replace("„", "").replace(' ', ''):
+        return "QUOTATION"
     # Word Order; only matches exact reordering.
     if exact_reordering(orig_str, cor_str):
         return "WO"
@@ -163,114 +193,93 @@ def get_two_sided_type(o_toks, c_toks, orig_toks, cor_toks):
     if merger.is_transposition_compatible(orig_str, cor_str):
         return "WO:SPELL"
 
-    # Other local changes (applicable only when there is a single word in source and target)
-    if len(orig_str) == len(cor_str):
-        rosen_err_types = compare_words(orig_str[0], cor_str[0])
-        # filter out all unspecs
-        rosen_err_types = [x for x in rosen_err_types.split('|') if 'unspec' not in x.lower()]
-
-        # if there are multiple char-error types identified, remove all formSingCh from them
-        if len(rosen_err_types) > 1:
-            rosen_err_types = [x for x in rosen_err_types if 'formSingCh' not in x]
-
-        if not rosen_err_types or len(rosen_err_types) != 1:
-            rosen_err_types = ""
-        else:
-            rosen_err_types = ":{}".format(rosen_err_types[0])
-
     # 1:1 replacements (very common)
     if len(orig_str) == len(cor_str) == 1:
-
-        # SPELLING AND INFLECTION
-        # note that :INFL is for words that are inflected forms but contain a spelling error (thus original word is not in dictionary)
-        # and :FORM is for inflected forms where the original word is a valid Czech word
-        # in Czech we refer to inflection as to "ohýbání (ohebná slova)" and they can come from either "skloňování" or "časování"
-        # as "časování" is applicable only to verbs and "skloňování" to rest of inflected_tags, we do not distinguish them any further
-
-        # errors in VERB-ENDINGS (verb ends with i or y depending on the subject)
-        if same_lemma(o_toks[0], c_toks[0]):
-            if orig_pos == cor_pos and orig_pos[0] in inflected_tags:
-                # psali x psaly
-                if cor_pos[0] == 'VERB':
-                    # if the only change is the last letter i vs y
-                    if o_toks[0].text[:-1] == c_toks[0].text[:-1] and o_toks[0].text[-1].lower() in "iy" \
-                            and c_toks[0].text[-1].lower() in "iy":
-                        if 'nsubj' in [tok.dep_ for tok in cor_toks]:
-                            return "VERB:FORM:vyjadreny_podmet_IY"
-                        else:
-                            return "VERB:FORM:nevyjadreny_podmet_IY"
-                    # else:
-                    #     if 'nsubj' in [tok.dep_ for tok in cor_toks]:
-                    #         return "VERB:FORM:vyjadreny_podmer"
-                    #     else:
-                    #         return "VERB:FORM:nevyjadreny_podmer"
-                return orig_pos[0] + ":FORM" + rosen_err_types
-            # Unknown morphology; i.e. we cannot be more specific.
-            else:
-                return "MORPH" + rosen_err_types
-
         # SPELLING
         # Only check alphabetical strings on the original side
         # Spelling errors take precedence over POS errors; this rule is ordered
         if orig_str[0].isalpha():
-            # Check a GB English dict for both orig and lower case.
+            # Check a Czech Morflex dict for both orig and lower case.
             # E.g. "cat" is in the dict, but "Cat" is not.
             if orig_str[0] not in spell and orig_str[0].lower() not in spell and orig_str[0].isalpha():
-                if same_lemma(o_toks[0], c_toks[0]):
-                    if orig_pos == cor_pos and orig_pos[0] in inflected_tags:
-                        return orig_pos[0] + ":INFL" + rosen_err_types
-                    # Unknown morphology; i.e. we cannot be more specific.
-                    else:
-                        return "MORPH" + rosen_err_types
-
                 # Use string similarity to detect true spelling errors.
                 # TODO nechceme to udelat ala matching (tj. upravney weighted levensthein)
                 char_ratio = SequenceMatcher(None, orig_str[0], cor_str[0]).ratio()
                 # Ratio > 0.5 means both side share at least half the same chars.
                 # WARNING: THIS IS AN APPROXIMATION.
                 if char_ratio > 0.5:
-                    return "SPELL" + rosen_err_types
+                    return "SPELL" + detailed_err_types
                 # If ratio is <= 0.5, the error is more complex e.g. tolk -> say
                 else:
                     # If POS is the same, this takes precedence over spelling.
+                    # jela => šla
+                    # jea => šla
                     if orig_pos == cor_pos and \
                                     orig_pos[0] not in rare_pos:
                         return orig_pos[0]
                     # Tricky cases.
                     else:
-                        return "OTHER" + rosen_err_types
+                        return "OTHER" + detailed_err_types
 
-        # INFLECTION
+        # TODO zkusit obe varianty a podivat se co se stane
+        # SPELLING AND INFLECTION
+        # old interpretation
+        # note that :INFL is for words that are inflected forms but contain a spelling error (thus original word is not in dictionary)
+        # and :FORM is for inflected forms where the original word is a valid Czech word
+        # in Czech we refer to inflection as to "ohýbání (ohebná slova)" and they can come from either "skloňování" or "časování"
+        # as "časování" is a# pplicable only to verbs and "skloňování" to rest of inflected_tags, we do not distinguish them any further
+        # new code:
+        # only infl, form is deprecated;
+        # whenever a word is not in the dictionary -> spell error (or pos or other)
+        # errors in VERB-ENDINGS (verb ends with i or y depending on the subject)
+
+        # psali x psaly
+        if cor_pos[0] == 'VERB' and orig_pos[0] == 'VERB':
+            # if the only change is the last letter i vs y
+            if o_toks[0].text[:-1] == c_toks[0].text[:-1] and o_toks[0].text[-1].lower() in "iy" \
+                    and c_toks[0].text[-1].lower() in "iy":
+                if 'nsubj' in [tok.dep_ for tok in cor_toks]:
+                    # TODO Sasa rika, ze to vyjadreny podmet nic moc nerika - muze nam pomoci i jine slovo v kontextu
+                    return "VERB:INFL:vyjadreny_podmet_IY"
+                else:
+                    return "VERB:INFL:nevyjadreny_podmet_IY"
+                    # else:
+                    #     if 'nsubj' in [tok.dep_ for tok in cor_toks]:
+                    #         return "VERB:FORM:vyjadreny_podmer"
+                    #     else:
+                    #         return "VERB:FORM:nevyjadreny_podmer"
+
         if same_lemma(o_toks[0], c_toks[0]):
             if orig_pos == cor_pos and orig_pos[0] in inflected_tags:
-                return orig_pos[0] + ":FORM" + rosen_err_types
-            # Unknown morphology; i.e. we cannot be more specific.
+                return orig_pos[0] + ":INFL" + detailed_err_types
+            # Unknown morphology; i.e. we cannot be more specific. - rare for Czech
             else:
-                return "MORPH" + rosen_err_types
+                return "MORPH" + detailed_err_types
 
         # Derivational morphology.
         # just in case that lemmatizer "failed"
-        if stemmer.stem(orig_str[0]) == stemmer.stem(cor_str[0]) and orig_pos[0] in inflected_tags and cor_pos[0] in inflected_tags:
-            return "MORPH" + rosen_err_types
+        if cz_stem(orig_str[0]) == cz_stem(cor_str[0]) and orig_pos[0] in inflected_tags and cor_pos[
+            0] in inflected_tags:
+            return "MORPH" + detailed_err_types
 
         # 3. GENERAL
         # POS-based tags. Some of these are context sensitive mispellings.
         if orig_pos == cor_pos and orig_pos[0] not in rare_pos:
-            return orig_pos[0] + rosen_err_types
+            return orig_pos[0] + detailed_err_types
         # Some dep labels map to POS-based tags.
         if orig_dep == cor_dep and orig_dep[0] in dep_map.keys():
-            return dep_map[orig_dep[0]] + rosen_err_types
+            return dep_map[orig_dep[0]] + detailed_err_types
         # Can use dep labels to resolve DET + PRON combinations.
         if set(orig_pos + cor_pos) == {"DET", "PRON"}:
             # DET cannot be a subject or object.
             if cor_dep[0] in {"nsubj", "nsubjpass", "dobj", "pobj"}:
-                return "PRON" + rosen_err_types
+                return "PRON" + detailed_err_types
             # "poss" indicates possessive determiner
             if cor_dep[0] == "poss":
-                return "DET" + rosen_err_types
+                return "DET" + detailed_err_types
         # Tricky cases.
         else:
-            return "OTHER" + rosen_err_types
+            return "OTHER" + detailed_err_types
 
     # Multi-token replacements (uncommon)
     # All same POS
