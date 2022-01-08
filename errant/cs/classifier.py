@@ -32,7 +32,7 @@ dep_map = {
 
 
 def is_valid_czech_word(word):
-    lemmas = morphodita.TaggedLemmas()
+    lemmas = ufal.morphodita.TaggedLemmas()
     return morphodita.analyze(word, morphodita.NO_GUESSER, lemmas) >= 0
 
 # Input: An Edit object

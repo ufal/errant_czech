@@ -28,9 +28,9 @@ curl --remote-name-all https://lindat.mff.cuni.cz/repository/xmlui/bitstream/han
 
 After installing, the *errant_parallel*, *errant_m2* and *errant_compare* scripts should be available. The *errant_parallel* and *m2_to_m2* scripts were extended with *-lang* argument and its default is set to *cs* (Czech).
 
-An example call to create M2 file from parallel ```input.txt``` and ```gold.txt``` that outputs ```m2.m2``` is following:
+An example call to create M2 file from parallel original noisy input and (two) reference files that outputs ```test.m2``` is following:
 ```
-errant_parallel -orig in.txt -cor gold.txt -out m2.m2
+errant_parallel -orig demo_czech/orig.txt -cor demo_czech/cor1.txt demo_czech/cor2.txt -out test.m2
 ```
 
 For more information on Czech error types, see [errant/cs/README.md](errant/cs/README.md), which contains additional information.
