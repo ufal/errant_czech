@@ -20,9 +20,9 @@ class Annotator:
     def parse(self, text, tokenise=False):
 
         if tokenise:
-            self.nlp.udpipe.tokenize = self.nlp.udpipe.tokenize_do
+            self.nlp.tokenizer.model.tokenize = self.nlp.tokenizer.model.tokenize_do
         else:
-            self.nlp.udpipe.tokenize = self.nlp.udpipe.tokenize_none
+            self.nlp.tokenizer.model.tokenize = self.nlp.tokenizer.model.tokenize_none
 
         return self.nlp(text)
         # if tokenise:

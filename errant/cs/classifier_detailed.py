@@ -5,14 +5,22 @@ import unidecode
 
 from . import merger
 from .czech_stemmer import cz_stem
-import ufal.morphodita
+from .detailed_1v1_classification import compare_words
+
+
+# Load Hunspell word list
+def load_word_list(path):
+    with open(path) as word_list:
+        return set([word.strip() for word in word_list])
+
 
 # Classifier resources
 base_dir = Path(__file__).resolve().parent
 # Spacy
 nlp = None
-# Morphodita with Czech word list
-morphodita = ufal.morphodita.Morpho.load(str(base_dir) + "/resources/czech-morfflex-160310.dict")
+# Lancaster Stemmer
+# Czech MOFFLEX word list (inc -ise and -ize)
+spell = load_word_list(base_dir / "resources" / "morfflex-cz.2016-03-10.utf8.conll09.tab_uniq")
 # Rare POS tags that make uninformative error categories
 rare_pos = {"SYM", "X"}
 
@@ -30,10 +38,6 @@ dep_map = {
     "prt": "PART",
     "punct": "PUNCT"}
 
-
-def is_valid_czech_word(word):
-    lemmas = morphodita.TaggedLemmas()
-    return morphodita.analyze(word, morphodita.NO_GUESSER, lemmas) >= 0
 
 # Input: An Edit object
 # Output: The same Edit object with an updated error type
@@ -100,18 +104,47 @@ def get_one_sided_type(toks):
     # Extract strings, pos tags and parse info from the toks
     str_list, pos_list, dep_list = get_edit_info(toks)
 
+    err_type = set()
+    for tok in toks:
+        if tok.lower_ == 'se' or tok.lower_ == 'si':
+            err_type.add(':SE')
+
+        if tok.lemma_.lower() == 'být':
+            err_type.add(':BE')
+
+    err_type = "".join(list(err_type))
+
     # POS-based tags. Ignores rare, uninformative categories
     if len(set(pos_list)) == 1 and pos_list[0] not in rare_pos:
-        return pos_list[0]
+        return pos_list[0] + err_type
     # More POS-based tags using special dependency labels
     if len(set(dep_list)) == 1 and dep_list[0] in dep_map.keys():
-        return dep_map[dep_list[0]]
+        return dep_map[dep_list[0]] + err_type
     # has gone => VERB, bych šel => VERB
     if set(pos_list) == {"AUX", "VERB"}:
-        return "VERB"
+        return "VERB" + err_type
     # Tricky cases
     else:
-        return "OTHER"
+        return "OTHER" + err_type
+
+
+def get_detailed_error_types_for_word_to_word(orig_str, cor_str):
+    if len(orig_str) == len(cor_str):
+        detailed_err_types = compare_words(orig_str[0], cor_str[0])
+        # filter out all unspecs
+        detailed_err_types = [x for x in detailed_err_types.split('|') if 'unspec' not in x.lower()]
+
+        # if there are multiple char-error types identified, remove all formSingCh from them
+        if len(detailed_err_types) > 1:
+            detailed_err_types = [x for x in detailed_err_types if 'formSingCh' not in x]
+
+        if not detailed_err_types or len(detailed_err_types) != 1:
+            detailed_err_types = ""
+        else:
+            detailed_err_types = ":{}".format(detailed_err_types[0])
+        return detailed_err_types
+    else:
+        return ""
 
 
 # Input 1: Spacy orig tokens
@@ -122,6 +155,9 @@ def get_two_sided_type(o_toks, c_toks, orig_toks, cor_toks):
     orig_str, orig_pos, orig_dep = get_edit_info(o_toks)
     cor_str, cor_pos, cor_dep = get_edit_info(c_toks)
 
+    # Other local changes (applicable only when there is a single word in source and target)
+    detailed_err_types = get_detailed_error_types_for_word_to_word(orig_str, cor_str)
+
     # Punctuation
     punctuation_chars = '!#$%&()*+,-./:;<=>?@[\\]^_`{|}~'  # purposely omit quotation marks
     if [c for c in " ".join(orig_str) if c not in punctuation_chars] == [c for c in " ".join(cor_str) if
@@ -129,13 +165,18 @@ def get_two_sided_type(o_toks, c_toks, orig_toks, cor_toks):
         return "PUNCT"
     # Diacritics
     if unidecode.unidecode(" ".join(orig_str)) == unidecode.unidecode(" ".join(cor_str)):
-        return "DIACR"
+        return "DIACR" + detailed_err_types
     # Orthography; i.e. whitespace and/or case errors.
     if only_orth_change(orig_str, cor_str):
         orth_type = ''
 
         if "".join(orig_str) == "".join(cor_str):
-            orth_type = ":WSPACE"
+            # common case is inserted/omitted whitespace between a preposition and a following word
+            if (len(orig_str) == 2 and len(cor_str) == 1 and orig_pos[0] == 'PREP') or (
+                                len(orig_str) == 1 and len(cor_str) == 2 and cor_pos[0] == 'PREP'):
+                orth_type = ":WSPACE:PREP"
+            else:
+                orth_type = ":WSPACE"
         elif " ".join(orig_str).lower() == " ".join(cor_str).lower():
             orth_type = ":CASING"
         return "ORTH" + orth_type
@@ -159,13 +200,13 @@ def get_two_sided_type(o_toks, c_toks, orig_toks, cor_toks):
         if orig_str[0].isalpha():
             # Check a Czech Morflex dict for both orig and lower case.
             # E.g. "cat" is in the dict, but "Cat" is not.
-            if not is_valid_czech_word(orig_str[0]) and orig_str[0].isalpha():
+            if orig_str[0] not in spell and orig_str[0].lower() not in spell and orig_str[0].isalpha():
                 # Use string similarity to detect true spelling errors.
                 char_ratio = SequenceMatcher(None, orig_str[0], cor_str[0]).ratio()
                 # Ratio > 0.5 means both side share at least half the same chars.
                 # WARNING: THIS IS AN APPROXIMATION.
                 if char_ratio > 0.5:
-                    return "SPELL"
+                    return "SPELL" + detailed_err_types
                 # If ratio is <= 0.5, the error is more complex e.g. tolk -> say
                 else:
                     # If POS is the same, this takes precedence over spelling.
@@ -176,47 +217,54 @@ def get_two_sided_type(o_toks, c_toks, orig_toks, cor_toks):
                         return orig_pos[0]
                     # Tricky cases.
                     else:
-                        return "OTHER"
+                        return "OTHER" + detailed_err_types
 
         # SPELLING AND INFLECTION
         # only infl, form is deprecated;
         # whenever a word is not in the dictionary -> spell error (or pos or other)
         # errors in VERB-ENDINGS (verb ends with i or y depending on the subject)
 
+        # psali x psaly
         if cor_pos[0] == 'VERB' and orig_pos[0] == 'VERB':
-            return "VERB"
+            # if the only change is the last letter i vs y
+            if o_toks[0].text[:-1] == c_toks[0].text[:-1] and o_toks[0].text[-1].lower() in "iy" \
+                    and c_toks[0].text[-1].lower() in "iy":
+                if 'nsubj' in [tok.dep_ for tok in cor_toks]:
+                    return "VERB:INFL:vyjadreny_podmet_IY"
+                else:
+                    return "VERB:INFL:nevyjadreny_podmet_IY"
 
         if same_lemma(o_toks[0], c_toks[0]):
             if orig_pos == cor_pos and orig_pos[0] in inflected_tags:
-                return orig_pos[0] + ":INFL"
+                return orig_pos[0] + ":INFL" + detailed_err_types
             # Unknown morphology; i.e. we cannot be more specific. - rare for Czech
             else:
-                return "MORPH"
+                return "MORPH" + detailed_err_types
 
         # Derivational morphology.
         # just in case that lemmatizer "failed"
         if cz_stem(orig_str[0], aggressive=True) == cz_stem(cor_str[0], aggressive=True) and orig_pos[
             0] in inflected_tags and cor_pos[0] in inflected_tags:
-            return "MORPH"
+            return "MORPH" + detailed_err_types
 
         # 3. GENERAL
         # POS-based tags. Some of these are context sensitive mispellings.
         if orig_pos == cor_pos and orig_pos[0] not in rare_pos:
-            return orig_pos[0]
+            return orig_pos[0] + detailed_err_types
         # Some dep labels map to POS-based tags.
         if orig_dep == cor_dep and orig_dep[0] in dep_map.keys():
-            return dep_map[orig_dep[0]]
+            return dep_map[orig_dep[0]] + detailed_err_types
         # Can use dep labels to resolve DET + PRON combinations.
         if set(orig_pos + cor_pos) == {"DET", "PRON"}:
             # DET cannot be a subject or object.
             if cor_dep[0] in {"nsubj", "nsubjpass", "dobj", "pobj"}:
-                return "PRON"
+                return "PRON" + detailed_err_types
             # "poss" indicates possessive determiner
             if cor_dep[0] == "poss":
-                return "DET"
+                return "DET" + detailed_err_types
         # Tricky cases.
         else:
-            return "OTHER"
+            return "OTHER" + detailed_err_types
 
     # Multi-token replacements (uncommon)
     # All same POS
@@ -227,9 +275,9 @@ def get_two_sided_type(o_toks, c_toks, orig_toks, cor_toks):
     if len(set(orig_dep + cor_dep)) == 1 and \
                     orig_dep[0] in dep_map.keys():
         return dep_map[orig_dep[0]]
-
     # Infinitives, gerunds, phrasal verbs.
     # by kopal (AUX VERB)
+
     # aux sel jsem (AUX) domu, bych (AUX)
     if set(orig_pos + cor_pos) == {"AUX", "VERB"}:
         # Final verbs with the same lemma are form; e.g. to eat -> eating

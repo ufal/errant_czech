@@ -69,8 +69,8 @@ def parse_args():
     parser.add_argument(
         "-lang",
         choices=["en", "cs"],
-        help="Input language. Currently supported: en (default), cs.",
-        default="en")
+        help="Input language. Currently supported: cs (default), en.",
+        default="cs")
     parser.add_argument(
         "-tok", 
         help="Word tokenise the text using spacy (default: False).",

@@ -1,3 +1,46 @@
+# Errant for Czech
+
+This repository contains code to run Errant for Czech. It is an extension of the original ERRANT developed for English (https://github.com/chrisjbryant/errant). 
+
+## Install 
+
+First, install the English ERRANT and its dependencies using:
+
+```
+pip install -U pip setuptools wheel spacy
+pip install -e .
+```
+
+Further install additional Czech dependencies (mainly UDPipe and its Python wrapper spacy-udpipe):
+```
+pip install -r errant/cs/requirements.txt
+```
+
+Finally, download dictionary of Czech words:
+ - First obtain czech-morfflex-pdt-160310.zip from https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-1674?show=full:
+```
+curl --remote-name-all https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-1674{/czech-morfflex-pdt-160310.zip}
+``` 
+- Then unzip it and copy ```czech-morfflex-160310.dict``` into ```errant/cs/resources```. 
+
+
+## Run
+
+After installing, the *errant_parallel*, *errant_m2* and *errant_compare* scripts should be available. The *errant_parallel* and *m2_to_m2* scripts were extended with *-lang* argument and its default is set to *cs* (Czech).
+
+An example call to create M2 file from parallel ```input.txt``` and ```gold.txt``` that outputs ```m2.m2``` is following:
+```
+errant_parallel -orig in.txt -cor gold.txt -out m2.m2
+```
+
+For more information on Czech error types, see [errant/cs/README.md](errant/cs/README.md), which contains additional information.
+
+
+
+Original README for English ERRANT, including more detailed description on how to run the scripts, goes below:
+
+# Original English ERRANT
+
 # ERRANT v2.0.0
 
 This repository contains the grammatical ERRor ANnotation Toolkit (ERRANT) described in:

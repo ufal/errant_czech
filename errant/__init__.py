@@ -1,8 +1,11 @@
 from importlib import import_module
+
 import spacy
 import spacy_udpipe
-from errant.annotator import Annotator
 import ufal.udpipe
+
+from errant.annotator import Annotator
+
 
 # Load an ERRANT Annotator object for a given language
 def load(lang, nlp=None):
@@ -13,19 +16,20 @@ def load(lang, nlp=None):
 
     # Load spacy
     if lang == 'cs':
-        nlp = nlp or spacy_udpipe.load("cs-pdt")
+        if not nlp:
+            spacy_udpipe.download("cs-pdt")
+            nlp = spacy_udpipe.load("cs-pdt")
 
-        def tokenize(text):
-            sentences = nlp.udpipe._read(
-                text, ufal.udpipe.InputFormat.newHorizontalInputFormat())
+            def tokenize(text):
+                sentences = nlp.tokenizer.model._read(
+                    text, ufal.udpipe.InputFormat.newHorizontalInputFormat())
 
-            for sentence in sentences:
-                sentence.setText(" ".join([word.form for word in sentence.words[1:]]))
-            return sentences
+                for sentence in sentences:
+                    sentence.setText(" ".join([word.form for word in sentence.words[1:]]))
+                return sentences
 
-
-        nlp.udpipe.tokenize_none = tokenize
-        nlp.udpipe.tokenize_do = nlp.udpipe.tokenize
+            nlp.tokenizer.model.tokenize_none = tokenize
+            nlp.tokenizer.model.tokenize_do = nlp.tokenizer.model.tokenize
 
     elif lang == 'en':
         nlp = nlp or spacy.load(lang, disable=["ner"])
@@ -36,8 +40,10 @@ def load(lang, nlp=None):
     # Load language edit classifier
     classifier = import_module("errant.%s.classifier" % lang)
     # The English classifier needs spacy
-    if lang == "en": classifier.nlp = nlp
-    elif lang == 'cs': classifier.nlp = nlp
+    if lang == "en":
+        classifier.nlp = nlp
+    elif lang == 'cs':
+        classifier.nlp = nlp
 
     # Return a configured ERRANT annotator
     return Annotator(lang, nlp, merger, classifier)

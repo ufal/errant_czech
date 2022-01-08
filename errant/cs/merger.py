@@ -4,11 +4,11 @@ import itertools
 from itertools import combinations, groupby
 from re import sub
 from string import punctuation
+from typing import List
 
 import numpy as np
 import spacy.parts_of_speech as POS
 from weighted_levenshtein import lev
-from typing import List
 
 from errant.edit import Edit
 
@@ -127,7 +127,7 @@ def process_seq(seq, alignment):
         if o[-1].lower == c[-1].lower:
             # Merge first token I or D: [Cat -> The big cat]
             if start == 0 and ((len(o) == 1 and c[0].text[0].isupper()) or \
-                    (len(c) == 1 and o[0].text[0].isupper())):
+                                       (len(c) == 1 and o[0].text[0].isupper())):
                 return merge_edits(seq[start:end + 1]) + \
                        process_seq(seq[end + 1:], alignment)
             # Merge with previous punctuation: [, we -> . We], [we -> . We]
@@ -149,7 +149,6 @@ def process_seq(seq, alignment):
         # print(pos_set, s_str, t_str)
         if (len(pos_set) == 1 and len(o) != len(c)) or \
                         pos_set == {POS.PART, POS.VERB}:
-            print('pos')
             return process_seq(seq[:start], alignment) + \
                    merge_edits(seq[start:end + 1]) + \
                    process_seq(seq[end + 1:], alignment)
@@ -185,7 +184,7 @@ def is_punct(token):
     return token.pos == POS.PUNCT or token.text in punctuation
 
 
-def is_transposition_compatible(source_tokens:List[str], corrected_tokens:List[str]):
+def is_transposition_compatible(source_tokens: List[str], corrected_tokens: List[str]):
     if len(source_tokens) != len(corrected_tokens):
         return False
 
@@ -195,19 +194,21 @@ def is_transposition_compatible(source_tokens:List[str], corrected_tokens:List[s
         return sorted([s.lower() for s in source_tokens]) == sorted([c.lower() for c in corrected_tokens])
 
     # construct all possible valid permutations (permutation is not valid when the first token maps to first token or the last token maps to last token)
-    permutations = [perm for perm in itertools.permutations(range(transpose_len)) if perm[0] != 0 and perm[transpose_len - 1] != transpose_len - 1]
+    permutations = [perm for perm in itertools.permutations(range(transpose_len)) if
+                    perm[0] != 0 and perm[transpose_len - 1] != transpose_len - 1]
 
     # compute char_costs of transforming each source token into each target token
     char_costs = np.zeros((transpose_len, transpose_len), dtype=np.float32)
     for i, source_token in enumerate(source_tokens):
         for j, corrected_token in enumerate(corrected_tokens):
-            char_costs[i,j] = char_cost(source_token, corrected_token)
+            char_costs[i, j] = char_cost(source_token, corrected_token)
 
     for perm in permutations:
-        if all([char_costs[i,p] < 0.25 for i,p in enumerate(perm)]):
+        if all([char_costs[i, p] < 0.25 for i, p in enumerate(perm)]):
             return True
 
     return False
+
 
 # Calculate the cost of character alignment; i.e. char similarity
 def char_cost(a, b):
@@ -223,8 +224,6 @@ def char_cost(a, b):
 
         return res
 
-    lemma_cost = 0
-    # TODO napad se stemmerem (lidech x lidi je podobne, ale tezke bez stemmeru)
     return 2 * lev(to_ascii(str(a)), to_ascii(str(b)), substitute_costs=substitute_costs) / (len(str(a)) + len(str(b)))
 
 

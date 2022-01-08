@@ -6,7 +6,7 @@ def main():
     args = parse_args()
     print("Loading resources...")
     # Load Errant
-    annotator = errant.load("en")
+    annotator = errant.load(args.lang)
     # Open output M2 file
     out_m2 = open(args.out, "w")
 
@@ -90,6 +90,11 @@ def parse_args():
         "-out",
         help = "The output filepath.",
         required = True)
+    parser.add_argument(
+        "-lang",
+        choices=["en", "cs"],
+        help="Input language. Currently supported: cs (default), en.",
+        default="cs")
     parser.add_argument(
         "-no_min",
         help = "Do not minimise edit spans (gold only).",

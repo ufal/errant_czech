@@ -11,50 +11,71 @@ def list_to_dict(l):
 
 # Deklarace "lingvistických" proměnných / hashů
 pair_voiced_voiceless = list_to_dict(
-    ["b", "p", "B", "P", "d", "t", "D", "T", "ď", "ť", "Ď", "Ť", "g", "k", "G", "K", "z", "s", "Z", "S", "ž", "š", "Ž", "Š", "v", "f", "V",
+    ["b", "p", "B", "P", "d", "t", "D", "T", "ď", "ť", "Ď", "Ť", "g", "k", "G", "K", "z", "s", "Z", "S", "ž", "š", "Ž",
+     "Š", "v", "f", "V",
      "F", "h", "ch", "H", "Ch"])
 pair_voiceless_voiced = list_to_dict(
-    ["p", "b", "P", "B", "t", "d", "T", "D", "ť", "ď", "Ť", "Ď", "k", "g", "K", "G", "s", "z", "S", "Z", "š", "ž", "Š", "Ž", "f", "v", "F",
+    ["p", "b", "P", "B", "t", "d", "T", "D", "ť", "ď", "Ť", "Ď", "k", "g", "K", "G", "s", "z", "S", "Z", "š", "ž", "Š",
+     "Ž", "f", "v", "F",
      "V", "ch", "h", "Ch", "H", "CH", "H"])
 
-list_vocals = ["a", "á", "e", "ě", "é", "i", "é", "o", "ó", "u", "ú", "ů", "y", "ý", "A", "Á", "E", "Ě", "É", "I", "Í", "O", "Ó", "U", "Ů",
+list_vocals = ["a", "á", "e", "ě", "é", "i", "é", "o", "ó", "u", "ú", "ů", "y", "ý", "A", "Á", "E", "Ě", "É", "I", "Í",
+               "O", "Ó", "U", "Ů",
                "Ú", "Y", "Ý"]
-list_consonnants = ["b", "B", "c", "C", "č", "Č", "d", "D", "ď", "Ď", "f", "F", "g", "G", "h", "H", "ch", "Ch", "j", "J", "k", "K", "l",
-                    "L", "m", "M", "n", "N", "ň", "Ň", "p", "P", "q", "Q", "r", "R", "ř", "Ř", "s", "S", "š", "Š", "t", "Ť", "v", "V", "w",
+list_consonnants = ["b", "B", "c", "C", "č", "Č", "d", "D", "ď", "Ď", "f", "F", "g", "G", "h", "H", "ch", "Ch", "j",
+                    "J", "k", "K", "l",
+                    "L", "m", "M", "n", "N", "ň", "Ň", "p", "P", "q", "Q", "r", "R", "ř", "Ř", "s", "S", "š", "Š", "t",
+                    "Ť", "v", "V", "w",
                     "W", "x", "X", "z", "Z", "ž", "Ž"]
 list_voiced = ["b", "B", "d", "D", "ď", "Ď", "g", "G", "v", "V", "z", "Z", "ž", "Ž", "h", "H"]
 list_voiceless = ["p", "P", "t", "T", "ť", "Ť", "k", "K", "s", "S", "š", "Š", "c", "C", "č", "Č", "f", "F", "ch", "Ch"]
 
 pair_shackem_bezhacku = list_to_dict(
-    ["č", "c", "Č", "C", "ď", "d", "Ď", "D", "ě", "e", "Ě", "E", "ľ", "l", "Ľ", "L", "ň", "n", "Ň", "N", "ř", "r", "Ř", "R", "š", "s", "Š",
+    ["č", "c", "Č", "C", "ď", "d", "Ď", "D", "ě", "e", "Ě", "E", "ľ", "l", "Ľ", "L", "ň", "n", "Ň", "N", "ř", "r", "Ř",
+     "R", "š", "s", "Š",
      "S", "ť", "t", "Ť", "T", "ž", "z", "Ž", "Z"])
 pair_bezhacku_shackem = list_to_dict(
-    ["c", "č", "C", "Č", "d", "ď", "D", "Ď", "e", "ě", "E", "Ě", "l", "ľ", "L", "Ľ", "n", "ň", "N", "Ň", "r", "ř", "R", "Ř", "s", "š", "S",
+    ["c", "č", "C", "Č", "d", "ď", "D", "Ď", "e", "ě", "E", "Ě", "l", "ľ", "L", "Ľ", "n", "ň", "N", "Ň", "r", "ř", "R",
+     "Ř", "s", "š", "S",
      "Š", "t", "ť", "T", "Ť", "z", "ž", "Z", "Ž"])
 pair_detene = list_to_dict(
-    ["ďe", "dě", "ťe", "tě", "ňe", "ně", "ďi", "di", "ťi", "ti", "ňi", "ni", "ďí", "dí", "ťí", "tí", "ňí", "ní", "Ďe", "Dě", "Ťe", "Tě",
+    ["ďe", "dě", "ťe", "tě", "ňe", "ně", "ďi", "di", "ťi", "ti", "ňi", "ni", "ďí", "dí", "ťí", "tí", "ňí", "ní", "Ďe",
+     "Dě", "Ťe", "Tě",
      "Ňe", "Ně", "Ďi", "Di", "Ťi", "Ti", "Ňi", "Ni", "Ďí", "Dí", "Ťí", "Tí", "Ňí", "Ní"])
 pair_palat = list_to_dict(
-    ["ke", "ce", "he", "ze", "ge", "ze", "che", "še", "kě", "ce", "hě", "ze", "gě", "ze", "chě", "še", "ki", "ci", "hi", "zi", "gi", "zi",
+    ["ke", "ce", "he", "ze", "ge", "ze", "che", "še", "kě", "ce", "hě", "ze", "gě", "ze", "chě", "še", "ki", "ci", "hi",
+     "zi", "gi", "zi",
      "chi", "ši", "kí", "cí", "hí", "zí", "gí", "zí", "chí", "ší"])
 pair_long_short_vowel = list_to_dict(
-    ["á", "a", "Á", "A", "é", "e", "É", "E", "í", "i", "Í", "I", "ó", "o", "Ó", "O", "ů", "u", "Ů", "U", "ú", "u", "Ú", "U", "ý", "y", "Ý",
+    ["á", "a", "Á", "A", "é", "e", "É", "E", "í", "i", "Í", "I", "ó", "o", "Ó", "O", "ů", "u", "Ů", "U", "ú", "u", "Ú",
+     "U", "ý", "y", "Ý",
      "Y"])
 pair_lc_uc = list_to_dict(
-    ["a", "A", "á", "Á", "b", "B", "c", "C", "č", "Č", "d", "D", "ď", "Ď", "e", "E", "é", "É", "f", "F", "g", "G", "h", "H", "ch", "Ch",
-     "i", "I", "í", "Í", "j", "J", "k", "K", "l", "L", "m", "M", "n", "N", "ň", "Ň", "o", "O", "ó", "Ó", "p", "P", "q", "Q", "r", "R", "ř",
-     "Ř", "s", "S", "š", "Š", "t", "T", "ť", "Ť", "u", "U", "ú", "Ú", "ů", "Ů", "v", "V", "w", "W", "x", "X", "y", "Y", "ý", "Ý", "z", "Z",
+    ["a", "A", "á", "Á", "b", "B", "c", "C", "č", "Č", "d", "D", "ď", "Ď", "e", "E", "é", "É", "f", "F", "g", "G", "h",
+     "H", "ch", "Ch",
+     "i", "I", "í", "Í", "j", "J", "k", "K", "l", "L", "m", "M", "n", "N", "ň", "Ň", "o", "O", "ó", "Ó", "p", "P", "q",
+     "Q", "r", "R", "ř",
+     "Ř", "s", "S", "š", "Š", "t", "T", "ť", "Ť", "u", "U", "ú", "Ú", "ů", "Ů", "v", "V", "w", "W", "x", "X", "y", "Y",
+     "ý", "Ý", "z", "Z",
      "ž", "Ž"])
 
-list_of_prefixes = ["arci", "bez", "beze", "dia", "do", "ex", "infra", "mezi", "místo", "na", "ná", "nad", "nade", "ne", "nej", "o", "ob",
-                    "obe", "od", "ode", "pa", "para", "po", "pod", "pode", "popo", "pra", "proti", "proto", "pře", "před", "přede", "přes",
-                    "přese", "při", "pří", "pseudo", "roz", "roze", "s", "se", "sou", "spolu", "u", "ú", "v", "ve", "vele", "vy", "vý",
+list_of_prefixes = ["arci", "bez", "beze", "dia", "do", "ex", "infra", "mezi", "místo", "na", "ná", "nad", "nade", "ne",
+                    "nej", "o", "ob",
+                    "obe", "od", "ode", "pa", "para", "po", "pod", "pode", "popo", "pra", "proti", "proto", "pře",
+                    "před", "přede", "přes",
+                    "přese", "při", "pří", "pseudo", "roz", "roze", "s", "se", "sou", "spolu", "u", "ú", "v", "ve",
+                    "vele", "vy", "vý",
                     "vz", "vze", "z", "za", "zá", "ze"]
-list_of_prep_forms = ["během", "bez", "beze", "blízko", "dík", "díky", "dle", "do", "doprostřed", "dovnitř", "k", "ke", "kol", "kolem",
-                      "kontra", "krom", "kromě", "ku", "kvůli", "mezi", "mimo", "místo", "na", "nad", "nade", "namísto", "napospas",
-                      "naproti", "napříč", "navzdory", "nedaleko", "o", "ob", "od", "ode", "ohledně", "okolo", "oproti", "po", "poblíž",
-                      "pod", "pode", "podél", "podle", "pomocí", "prostřednictvím", "proti", "před", "přede", "přes", "přese", "při", "s",
-                      "se", "skrz", "skrze", "u", "uprostřed", "uvnitř", "v", "včetně", "ve", "vedle", "versus", "vně", "vod", "vstříc",
+list_of_prep_forms = ["během", "bez", "beze", "blízko", "dík", "díky", "dle", "do", "doprostřed", "dovnitř", "k", "ke",
+                      "kol", "kolem",
+                      "kontra", "krom", "kromě", "ku", "kvůli", "mezi", "mimo", "místo", "na", "nad", "nade", "namísto",
+                      "napospas",
+                      "naproti", "napříč", "navzdory", "nedaleko", "o", "ob", "od", "ode", "ohledně", "okolo", "oproti",
+                      "po", "poblíž",
+                      "pod", "pode", "podél", "podle", "pomocí", "prostřednictvím", "proti", "před", "přede", "přes",
+                      "přese", "při", "s",
+                      "se", "skrz", "skrze", "u", "uprostřed", "uvnitř", "v", "včetně", "ve", "vedle", "versus", "vně",
+                      "vod", "vstříc",
                       "vůči", "vyjma", "vzdor", "z", "za", "ze", "zevnitř", "zkraje", "zpod", "zpoza"]
 
 
@@ -87,7 +108,8 @@ def compare_single_characters(w_char, a_char, w1_char, a1_char):
 
     if not report_error_char:
         # Znělost (znělá R0 / neznělá R1)
-        if ((w_char in pair_voiced_voiceless) and (pair_voiced_voiceless[w_char] == a_char)) or ((a_char == 'CH') and (w_char == 'H')):
+        if ((w_char in pair_voiced_voiceless) and (pair_voiced_voiceless[w_char] == a_char)) or (
+            (a_char == 'CH') and (w_char == 'H')):
             report_error_char = 'Z'
             if w1_char in list_voiced:
                 report_error_type = 'formVoiced1'  # Po chybně znělém znaku následuje znělý (spodoba znělosti).
@@ -97,7 +119,8 @@ def compare_single_characters(w_char, a_char, w1_char, a1_char):
                 report_error_type = 'formVoiced'
 
         # Znělost (neznělá R0 / znělá R1)
-        elif ((w_char in pair_voiceless_voiced and pair_voiceless_voiced[w_char] == a_char)) or ((w_char == 'CH') and (a_char == 'H')):
+        elif ((w_char in pair_voiceless_voiced and pair_voiceless_voiced[w_char] == a_char)) or (
+            (w_char == 'CH') and (a_char == 'H')):
             report_error_char = 'K'
             if w1_char in list_voiceless:  # Po chybně neznělém znaku následuje neznělý (spodoba znělosti).
                 report_error_type = 'formVoiced0'
@@ -159,7 +182,8 @@ def compare_single_characters(w_char, a_char, w1_char, a1_char):
             report_error_char = 'y'
             report_error_type = 'formYJ0'
         # ú/ů
-        elif ((w_char.lower() == "ú") and (a_char.lower() == "ů")) or ((w_char.lower() == "ů") and (a_char.lower() == "ú")):
+        elif ((w_char.lower() == "ú") and (a_char.lower() == "ů")) or (
+            (w_char.lower() == "ů") and (a_char.lower() == "ú")):
             report_error_char = 'U'
             report_error_type = 'formDiaU'
             if (w_char in ["Ú", "Ů"]) and (a_char in ["ú", "ů"]):
@@ -167,7 +191,8 @@ def compare_single_characters(w_char, a_char, w1_char, a1_char):
             elif (a_char in ["Ú", "Ů"]) and (w_char in ["ú", "ů"]):
                 report_error_type += '+formCap0'
 
-        elif ((w_char.lower() == "ě") and (a_char.lower() == "é")) or ((w_char.lower() == "é") and (a_char.lower() == "ě")):
+        elif ((w_char.lower() == "ě") and (a_char.lower() == "é")) or (
+            (w_char.lower() == "é") and (a_char.lower() == "ě")):
             report_error_char = 'E'
             report_error_type = 'formDiaE'
             if (w_char in ["Ě", "É"]) and (a_char in ["ě", "é"]):
@@ -176,12 +201,14 @@ def compare_single_characters(w_char, a_char, w1_char, a1_char):
                 report_error_type += '+formCap0'
 
         # i/y
-        elif ((w_char.lower() == "i") and (a_char.lower() == "y")) or ((w_char.lower() == "í") and (a_char.lower() == "ý")):
+        elif ((w_char.lower() == "i") and (a_char.lower() == "y")) or (
+            (w_char.lower() == "í") and (a_char.lower() == "ý")):
             report_error_char = 'Y'
             report_error_type = 'formY0'
 
         # y/i
-        elif ((w_char.lower() == "y") and (a_char.lower() == "i")) or ((w_char.lower() == "ý") and (a_char.lower() == "í")):
+        elif ((w_char.lower() == "y") and (a_char.lower() == "i")) or (
+            (w_char.lower() == "ý") and (a_char.lower() == "í")):
             report_error_char = 'Y'
             report_error_type = 'formY1'
 
@@ -303,7 +330,8 @@ def compare_words(ww, aa):
                         e_string[id_ch] = err_char
 
                 # Lokální metateze. "jesm"
-                elif (id_ch < len(w_string) - 1) and (w_string[id_ch] == a_string[id_ch + 1]) and (w_string[id_ch + 1] == a_string[id_ch]) \
+                elif (id_ch < len(w_string) - 1) and (w_string[id_ch] == a_string[id_ch + 1]) and (
+                    w_string[id_ch + 1] == a_string[id_ch]) \
                         and ((id_ch + 1 == len(w_string) or (
                                     (id_ch < len(w_string) - 2) and (w_string[id_ch + 2] == a_string[id_ch + 2]))) and \
                                      ((id_ch == 0) or (w_string[id_ch - 1] == a_string[id_ch - 1]))):
@@ -380,16 +408,22 @@ def compare_words(ww, aa):
 
     # Nestejně dlouhá slova, ale alespoň nějaká shoda na začátku nebo na konci slova.
     elif ((len(w_string) > 0) and (len(a_string) > 0) and (len(w_string) != len(a_string)) and \
-                  ((a_string[0] == w_string[0]) or (len(w_string) > 1 and len(a_string) > 1 and a_string[1] == w_string[1]) or \
-                           ((len(a_string) > 2) and len(w_string) > 1 and (a_string[1] == w_string[0]) and (a_string[2] == w_string[1])) or \
-                           ((len(w_string) > 2) and len(a_string) > 1 and (a_string[0] == w_string[1]) and (a_string[1] == w_string[2])) or \
-                           (a_string[-1] == w_string[-1]) or (len(a_string) > 1 and len(w_string) > 1 and a_string[-2] == w_string[-2]))):
+                  ((a_string[0] == w_string[0]) or (
+                              len(w_string) > 1 and len(a_string) > 1 and a_string[1] == w_string[1]) or \
+                           ((len(a_string) > 2) and len(w_string) > 1 and (a_string[1] == w_string[0]) and (
+                               a_string[2] == w_string[1])) or \
+                           ((len(w_string) > 2) and len(a_string) > 1 and (a_string[0] == w_string[1]) and (
+                               a_string[1] == w_string[2])) or \
+                           (a_string[-1] == w_string[-1]) or (
+                              len(a_string) > 1 and len(w_string) > 1 and a_string[-2] == w_string[-2]))):
 
         if ((a_string[0] == w_string[0]) or \
-                    ((len(a_string) > 2) and (len(w_string) > 2) and (a_string[1] == w_string[1]) and (a_string[2] == w_string[2])) or \
+                    ((len(a_string) > 2) and (len(w_string) > 2) and (a_string[1] == w_string[1]) and (
+                        a_string[2] == w_string[2])) or \
                             ((len(a_string) > 2) and len(w_string) > 1) and (a_string[1] == w_string[0]) and (
                                 a_string[2] == w_string[1])) or \
-                ((len(w_string) > 2) and len(a_string) > 1 and (a_string[0] == w_string[1]) and (a_string[1] == w_string[2])):
+                ((len(w_string) > 2) and len(a_string) > 1 and (a_string[0] == w_string[1]) and (
+                    a_string[1] == w_string[2])):
             # Kontrola od začátku slovních tvarů.
             a_shift = 0
             for id_ch in range(0, max(len(a_string), len(w_string))):
@@ -410,7 +444,8 @@ def compare_words(ww, aa):
 
                     err_name, err_char = compare_single_characters(w0, a0, w1, a1)
 
-                    if err_name == 'formSingCh' and (w1 == "$" or a1 == "$") and (w_string[:-1] != a_string or a_string[:-1] != w_string):
+                    if err_name == 'formSingCh' and (w1 == "$" or a1 == "$") and (
+                            w_string[:-1] != a_string or a_string[:-1] != w_string):
                         pass
 
                     elif err_char:
@@ -459,14 +494,16 @@ def compare_words(ww, aa):
                             a_pair = a_string[id_cha - 1] + a_string[id_cha]
                             w_pair = w_string[id_ch - 1] + w_string[id_ch]
 
-                            if re.search(r'^[Mm](ně)|(ňe)|(ňě)|(ŇE)|(NĚ)$', w_trio) and re.search(r'^[Mm][Ěě]$', a_pair):
+                            if re.search(r'^[Mm](ně)|(ňe)|(ňě)|(ŇE)|(NĚ)$', w_trio) and re.search(r'^[Mm][Ěě]$',
+                                                                                                  a_pair):
                                 errors.append('formMne1')
                                 e_string[id_ch - 1] = 'M'
                                 e_string[id_ch] = 'M'
                                 e_string[id_ch + 1] = 'M'
                                 a_shift -= 1
                                 diff_length_error_recorder = 1
-                            elif re.search(r'^[Mm](ně)|(ňe)|(ňě)|(ŇE)|(NĚ)$', a_trio) and re.search(r'^[Mm][Ěě]$', w_pair):
+                            elif re.search(r'^[Mm](ně)|(ňe)|(ňě)|(ŇE)|(NĚ)$', a_trio) and re.search(r'^[Mm][Ěě]$',
+                                                                                                    w_pair):
                                 errors.append('formMne0')
                                 e_string[id_ch - 1] = 'M'
                                 e_string[id_ch] = 'M'
@@ -478,7 +515,8 @@ def compare_words(ww, aa):
                                     a_string[id_cha - 1].lower() == "i") and \
                                 (((w_string[id_ch].lower() == "j") and (w_string[id_ch + 1] in list_vocals) and (
                                             w_string[id_ch + 1] == a_string[id_cha])) or \
-                                         ((a_string[id_cha].lower() == "j") and (a_string[id_cha + 1] in list_vocals) and (
+                                         ((a_string[id_cha].lower() == "j") and (
+                                             a_string[id_cha + 1] in list_vocals) and (
                                                      w_string[id_ch] == a_string[id_cha + 1]))):
 
                             if w_string[id_ch].lower() == "j":
@@ -493,17 +531,18 @@ def compare_words(ww, aa):
                                 diff_length_error_recorder = 1
 
                         # Protetické "J" (sou jse)
-                        if (not e_string[id_ch]) and (id_ch == 0) and (((w_string[0].lower() == "j") and (a_string[0].lower() != "j") and \
-                                                                                ((w_string[1] == a_string[0]) or (
-                                                                                            a_string[0].lower() == w_string[
-                                                                                            1].lower())) and (
-                                    a_string[0] in list_consonnants)) or \
-                                                                               ((a_string[0].lower() == "j") and (
-                                                                                           w_string[0].lower() != "j") and \
-                                                                                        ((w_string[0] == a_string[1]) or (
-                                                                                                    w_string[0].lower() == a_string[
-                                                                                                    1].lower())) and (
-                                                                                           a_string[1] in list_consonnants))):
+                        if (not e_string[id_ch]) and (id_ch == 0) and (
+                            ((w_string[0].lower() == "j") and (a_string[0].lower() != "j") and \
+                                     ((w_string[1] == a_string[0]) or (
+                                                 a_string[0].lower() == w_string[
+                                                 1].lower())) and (
+                                        a_string[0] in list_consonnants)) or \
+                                ((a_string[0].lower() == "j") and (
+                                            w_string[0].lower() != "j") and \
+                                         ((w_string[0] == a_string[1]) or (
+                                                     w_string[0].lower() == a_string[
+                                                     1].lower())) and (
+                                            a_string[1] in list_consonnants))):
                             if (w_string[0].lower() == "j"):
                                 errors.append('formProtJ1')
                                 e_string[id_ch + 1] = 'J'
@@ -516,17 +555,18 @@ def compare_words(ww, aa):
                             e_string[id_ch] = 'J'
 
                         # Protetické "V" (oják vokurka)
-                        if (not e_string[id_ch]) and (id_ch == 0) and (((w_string[0].lower() == "v") and (a_string[0].lower() != "v") and \
-                                                                                ((w_string[1] == a_string[0]) or (
-                                                                                            a_string[0].lower() == w_string[
-                                                                                            1].lower())) and (
-                                    a_string[0].lower() == "o")) or \
-                                                                               ((a_string[0].lower() == "v") and (
-                                                                                           w_string[0].lower() != "v") and (
-                                                                                           (w_string[0] == a_string[1]) or \
-                                                                                               (w_string[0].lower() == a_string[
-                                                                                                   1].lower())) and (
-                                                                                           a_string[1].lower() == "o"))):
+                        if (not e_string[id_ch]) and (id_ch == 0) and (
+                            ((w_string[0].lower() == "v") and (a_string[0].lower() != "v") and \
+                                     ((w_string[1] == a_string[0]) or (
+                                                 a_string[0].lower() == w_string[
+                                                 1].lower())) and (
+                                        a_string[0].lower() == "o")) or \
+                                ((a_string[0].lower() == "v") and (
+                                            w_string[0].lower() != "v") and (
+                                            (w_string[0] == a_string[1]) or \
+                                                (w_string[0].lower() == a_string[
+                                                    1].lower())) and (
+                                            a_string[1].lower() == "o"))):
                             if (w_string[0].lower() == "j"):
                                 errors.append('formProtV1')
                                 e_string[id_ch + 1] = 'V'
@@ -541,7 +581,8 @@ def compare_words(ww, aa):
                         # Epentetické "e" (navíc): jen mezi konsonanty!
                         if (not e_string[id_ch]) and (w_string[id_ch] == 'e') and (id_ch > 0) and (
                                     a_string[id_cha - 1] == w_string[id_ch - 1]) and \
-                                (a_string[id_cha] == w_string[id_ch + 1]) and (w_string[id_ch - 1] in list_consonnants) and (
+                                (a_string[id_cha] == w_string[id_ch + 1]) and (
+                            w_string[id_ch - 1] in list_consonnants) and (
                                     w_string[id_ch + 1] in list_consonnants):
                             errors.append('formEpentE1')
                             e_string[id_ch] = 'E'
@@ -551,7 +592,8 @@ def compare_words(ww, aa):
                         # Epentetické "e" (chybí): jen mezi konsonanty!
                         elif (not e_string[id_ch]) and (a_string[id_cha] == 'e') and (id_cha > 0) and (
                                     a_string[id_cha - 1] == w_string[id_ch - 1]) and \
-                                (a_string[id_cha + 1] == w_string[id_ch]) and (w_string[id_ch - 1] in list_consonnants) and (
+                                (a_string[id_cha + 1] == w_string[id_ch]) and (
+                            w_string[id_ch - 1] in list_consonnants) and (
                                     w_string[id_ch] in list_consonnants):
                             errors.append('formEpentE0')
                             e_string[id_ch] = 'E'
@@ -577,7 +619,8 @@ def compare_words(ww, aa):
                                 diff_length_error_recorder = 1
 
                         # Ve zbytku případů ověření, zda nejde jen o jeden chybně přebývající/chybějící znak.
-                        if (not e_string[id_ch]) and (len(w_string) == len(a_string) + 1 - a_shift) and (id_ch < len(w_string)) and \
+                        if (not e_string[id_ch]) and (len(w_string) == len(a_string) + 1 - a_shift) and (
+                            id_ch < len(w_string)) and \
                                 (w_string[id_ch + 1] == a_string[id_cha]):
                             remainder_equal = 1
                             for test_rest in range(id_ch + 1, len(w_string)):
@@ -589,7 +632,8 @@ def compare_words(ww, aa):
                                 errors.append('formRedunChar')
                                 diff_length_error_recorder = 1
                                 break
-                        elif ((not e_string[id_ch]) and (len(w_string) == len(a_string) - 1 - a_shift) and (id_ch < len(w_string)) and \
+                        elif ((not e_string[id_ch]) and (len(w_string) == len(a_string) - 1 - a_shift) and (
+                            id_ch < len(w_string)) and \
                                       (a_string[id_cha + 1] == w_string[id_ch])):
                             remainder_equal = 1
                             for test_rest in range(id_ch, len(w_string)):
@@ -609,9 +653,12 @@ def compare_words(ww, aa):
     if len(errors) == 0:
 
         if (a_string[0] == w_string[0]) or \
-                ((len(a_string) > 2) and (len(w_string) > 2) and (a_string[1] == w_string[1]) and (a_string[2] == w_string[2])) or \
-                ((len(a_string) > 2) and (len(w_string) > 1) and (a_string[1] == w_string[0]) and (a_string[2] == w_string[1])) or \
-                ((len(w_string) > 2) and (len(a_string) > 1) and (a_string[0] == w_string[1]) and (a_string[1] == w_string[2])):
+                ((len(a_string) > 2) and (len(w_string) > 2) and (a_string[1] == w_string[1]) and (
+                    a_string[2] == w_string[2])) or \
+                ((len(a_string) > 2) and (len(w_string) > 1) and (a_string[1] == w_string[0]) and (
+                    a_string[2] == w_string[1])) or \
+                ((len(w_string) > 2) and (len(a_string) > 1) and (a_string[0] == w_string[1]) and (
+                    a_string[1] == w_string[2])):
             # Kontrola od začátku slovních tvarů.
             a_shift = 0
             for id_ch in range(0, max(len(w_string), len(a_string))):
@@ -631,7 +678,8 @@ def compare_words(ww, aa):
                         a1 = a_string[id_cha + 1]
 
                     err_name, err_char = compare_single_characters(w0, a0, w1, a1)
-                    if err_name == 'formSingCh' and (w1 == "$" or a1 == "$") and (w_string[:-1] != a_string or a_string[:-1] != w_string):
+                    if err_name == 'formSingCh' and (w1 == "$" or a1 == "$") and (
+                            w_string[:-1] != a_string or a_string[:-1] != w_string):
                         pass
 
                     elif err_char:
@@ -683,14 +731,16 @@ def compare_words(ww, aa):
                             a_trio = a_string[id_cha - 1] + a_pair
                             a_pair = a_string[id_cha - 1] + a_string[id_cha]
                             w_pair = w_string[id_ch - 1] + w_string[id_ch]
-                            if re.search(r'^[Mm](ně)|(ňe)|(ňě)|(ŇE)|(NĚ)$', w_trio) and re.search(r'^[Mm][Ěě]$', a_pair):
+                            if re.search(r'^[Mm](ně)|(ňe)|(ňě)|(ŇE)|(NĚ)$', w_trio) and re.search(r'^[Mm][Ěě]$',
+                                                                                                  a_pair):
                                 errors.append('formMne1')
                                 e_string[id_ch - 1] = 'M'
                                 e_string[id_ch] = 'M'
                                 e_string[id_ch + 1] = 'M'
                                 a_shift -= 1
                                 diff_length_error_recorder = 1
-                            elif re.search(r'^[Mm](ně)|(ňe)|(ňě)|(ŇE)|(NĚ)$', a_trio) and re.search(r'^[Mm][Ěě]$', w_pair):
+                            elif re.search(r'^[Mm](ně)|(ňe)|(ňě)|(ŇE)|(NĚ)$', a_trio) and re.search(r'^[Mm][Ěě]$',
+                                                                                                    w_pair):
                                 errors.append('formMne0')
                                 e_string[id_ch - 1] = 'M'
                                 e_string[id_ch] = 'M'
@@ -715,17 +765,18 @@ def compare_words(ww, aa):
                                 diff_length_error_recorder = 1
 
                         # Protetické "J" (sou jse)
-                        if (not e_string[id_ch]) and (id_ch == 0) and (((w_string[0].lower() == "j") and (a_string[0].lower() == "j") and \
-                                                                                ((w_string[1] == a_string[0]) or (
-                                                                                            a_string[0].lower() == w_string[
-                                                                                            1].lower())) and (
-                                    a_string[0] in list_consonnants)) or \
-                                                                               ((a_string[0].lower() == "j") and (
-                                                                                           w_string[0].lower() == "j") and (
-                                                                                           (w_string[0] == a_string[1]) or \
-                                                                                               (w_string[0].lower() == a_string[
-                                                                                                   1].lower())) and (
-                                                                                           a_string[1] in list_consonnants))):
+                        if (not e_string[id_ch]) and (id_ch == 0) and (
+                            ((w_string[0].lower() == "j") and (a_string[0].lower() == "j") and \
+                                     ((w_string[1] == a_string[0]) or (
+                                                 a_string[0].lower() == w_string[
+                                                 1].lower())) and (
+                                        a_string[0] in list_consonnants)) or \
+                                ((a_string[0].lower() == "j") and (
+                                            w_string[0].lower() == "j") and (
+                                            (w_string[0] == a_string[1]) or \
+                                                (w_string[0].lower() == a_string[
+                                                    1].lower())) and (
+                                            a_string[1] in list_consonnants))):
                             if (w_string[0].lower() == "j"):
                                 errors.append('formProtJ1')
                                 e_string[id_ch + 1] = 'J'
@@ -738,17 +789,18 @@ def compare_words(ww, aa):
                             e_string[id_ch] = 'J'
 
                         # Protetické "V" (oják vokurka)
-                        if (not e_string[id_ch]) and (id_ch == 0) and (((w_string[0].lower() == "v") and (a_string[0].lower() == "v") and \
-                                                                                ((w_string[1] == a_string[0]) or (
-                                                                                            a_string[0].lower() == w_string[
-                                                                                            1].lower())) and (
-                                    a_string[0].lower() == "o")) or \
-                                                                               ((a_string[0].lower() == "v") and (
-                                                                                           w_string[0].lower() != "v") and (
-                                                                                           (w_string[0] == a_string[1]) or \
-                                                                                               (w_string[0].lower() == a_string[
-                                                                                                   1].lower())) and (
-                                                                                           a_string[1].lower() == "o"))):
+                        if (not e_string[id_ch]) and (id_ch == 0) and (
+                            ((w_string[0].lower() == "v") and (a_string[0].lower() == "v") and \
+                                     ((w_string[1] == a_string[0]) or (
+                                                 a_string[0].lower() == w_string[
+                                                 1].lower())) and (
+                                        a_string[0].lower() == "o")) or \
+                                ((a_string[0].lower() == "v") and (
+                                            w_string[0].lower() != "v") and (
+                                            (w_string[0] == a_string[1]) or \
+                                                (w_string[0].lower() == a_string[
+                                                    1].lower())) and (
+                                            a_string[1].lower() == "o"))):
                             if (w_string[0].lower() == "j"):
                                 errors.append('formProtV1')
                                 e_string[id_ch + 1] = 'V'
@@ -763,7 +815,8 @@ def compare_words(ww, aa):
                         # Epentetické "e" (navíc): jen mezi konsonanty!
                         if (not e_string[id_ch]) and (w_string[id_ch] == 'e') and (id_ch > 0) and (id_cha > 0) and (
                                     a_string[id_cha - 1] == w_string[id_ch - 1]) and \
-                                (a_string[id_cha] == w_string[id_ch + 1]) and (w_string[id_ch - 1] in list_consonnants) and (
+                                (a_string[id_cha] == w_string[id_ch + 1]) and (
+                            w_string[id_ch - 1] in list_consonnants) and (
                                     w_string[id_ch + 1] in list_consonnants):
                             errors.append('formEpentE1')
                             e_string[id_ch] = 'E'
@@ -772,7 +825,8 @@ def compare_words(ww, aa):
                         # Epentetické "e" (chybí): jen mezi konsonanty!
                         elif (not e_string[id_ch]) and (a_string[id_cha] == 'e') and (id_cha > 0) and (
                                     a_string[id_cha - 1] == w_string[id_ch - 1]) and (id_ch < len(w_string) - 1) and \
-                                (a_string[id_cha + 1] == w_string[id_ch]) and (w_string[id_ch - 1] in list_consonnants) and (
+                                (a_string[id_cha + 1] == w_string[id_ch]) and (
+                            w_string[id_ch - 1] in list_consonnants) and (
                                     w_string[id_ch] in list_consonnants):
                             errors.append('formEpentE0')
                             e_string[id_ch] = 'E'
@@ -780,12 +834,14 @@ def compare_words(ww, aa):
                             diff_length_error_recorder = 1
 
                         # Zdvojená hláska (kamený)
-                        if (id_ch > 0) and (id_cha > 0) and (id_ch < len(w_string) - 1) and (id_cha < len(a_string) - 1) and (
-                            w_string[id_ch].lower() != a_string[id_cha].lower()) and (
-                            w_string[id_ch - 1].lower() == a_string[id_cha - 1].lower()) and (((w_string[id_ch - 1].lower() == w_string[
-                            id_ch].lower()) and (w_string[id_ch + 1].lower() == a_string[id_cha].lower())) or (
-                            (a_string[id_cha - 1].lower() == a_string[id_cha].lower()) and (
-                            w_string[id_ch].lower() == a_string[id_cha + 1].lower()))):
+                        if (id_ch > 0) and (id_cha > 0) and (id_ch < len(w_string) - 1) and (
+                            id_cha < len(a_string) - 1) and (
+                                    w_string[id_ch].lower() != a_string[id_cha].lower()) and (
+                                    w_string[id_ch - 1].lower() == a_string[id_cha - 1].lower()) and (
+                            ((w_string[id_ch - 1].lower() == w_string[
+                                id_ch].lower()) and (w_string[id_ch + 1].lower() == a_string[id_cha].lower())) or (
+                                    (a_string[id_cha - 1].lower() == a_string[id_cha].lower()) and (
+                                            w_string[id_ch].lower() == a_string[id_cha + 1].lower()))):
 
                             if w_string[id_ch - 1].lower() == w_string[id_ch].lower():
                                 e_string[id_ch] = 'g'
@@ -799,7 +855,8 @@ def compare_words(ww, aa):
                                 diff_length_error_recorder = 1
 
                         # Ve zbytku případů ověření, zda nejde jen o jeden chybně přebývající/chybějící znak.
-                        if ((not e_string[id_ch]) and (len(w_string) == len(a_string) + 1 - a_shift) and (id_ch < len(w_string) - 1) and \
+                        if ((not e_string[id_ch]) and (len(w_string) == len(a_string) + 1 - a_shift) and (
+                            id_ch < len(w_string) - 1) and \
                                     (w_string[id_ch + 1] == a_string[id_cha])):
                             remainder_equal = 1
                             for test_rest in range(id_ch + 1, len(w_string)):
@@ -812,7 +869,8 @@ def compare_words(ww, aa):
                                 errors.append('formRedunChar')
                                 diff_length_error_recorder = 1
                                 break
-                        elif ((not e_string[id_ch]) and (len(w_string) == len(a_string) - 1 - a_shift) and (id_ch < len(w_string) - 1) and \
+                        elif ((not e_string[id_ch]) and (len(w_string) == len(a_string) - 1 - a_shift) and (
+                            id_ch < len(w_string) - 1) and \
                                       (a_string[id_cha + 1] == w_string[id_ch])):
                             remainder_equal = 1
                             for test_rest in range(id_ch, len(w_string)):
@@ -846,7 +904,8 @@ def compare_words(ww, aa):
 
                 tail_same_ind_w = len(w_string) - 1
                 tail_same_ind_a = len(a_string) - 1
-                while tail_same_ind_w >= 0 and tail_same_ind_a >= 0 and w_string[tail_same_ind_w] == a_string[tail_same_ind_a]:
+                while tail_same_ind_w >= 0 and tail_same_ind_a >= 0 and w_string[tail_same_ind_w] == a_string[
+                    tail_same_ind_a]:
                     tail_same_ind_w -= 1
                     tail_same_ind_a -= 1
 
