@@ -1,6 +1,6 @@
 # Errant for Czech
 
-This repository contains code to run Errant for Czech. It is an extension of the original ERRANT developed for English (https://github.com/chrisjbryant/errant). 
+This repository contains code to run Errant for Czech. It is an extension of the original ERRANT developed for English (https://github.com/chrisjbryant/errant). It was introduced in the paper *Czech Grammar Error Correction with a Large and Diverse Corpus* that is accepted to TACL. Until published there, see its [arXiv version](https://arxiv.org/pdf/2201.05590.pdf).
 
 ## Install 
 
